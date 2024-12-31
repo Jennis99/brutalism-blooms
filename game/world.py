@@ -1,4 +1,5 @@
-# import pygame as pg
+import pygame as pg
+import random
 from .settings import TILE_SIZE
 
 
@@ -10,6 +11,8 @@ class World:
         self.width = width
         self.height = height
 
+        self.world_surface = pg.Surface((width, height))
+        self.tiles = self.load_images()
         self.world = self.create_world()
 
     def create_world(self):
@@ -21,6 +24,9 @@ class World:
             for grid_y in range(self.grid_length_y):
                 world_tile = self.grid_to_world(grid_x, grid_y)
                 world[grid_x].append(world_tile)
+
+                render_pos = world_tile["render_pos"]
+                self.world_surface.blit(self.tiles["block"], (render_pos[0] + self.width / 2, render_pos[1] + self.height / 4))
 
         return world
 
@@ -35,10 +41,23 @@ class World:
 
         iso_poly = [self.cart_to_iso(x, y) for x, y in rect]
 
+        min_x = min([x for x, y in iso_poly])
+        min_y = min([y for x, y in iso_poly])
+
+        r = random.randint(1, 100)
+        if r <= 5:
+            tile = "tree"
+        elif r <= 10:
+            tile = "rock"
+        else:
+            tile = ""
+
         out = {
             "grid": [grid_x, grid_y],
             "cart_rect": rect,
-            "iso_poly": iso_poly
+            "iso_poly": iso_poly,
+            "render_pos": [min_x, min_y],
+            "tile": tile
         }
 
         return out
@@ -47,3 +66,16 @@ class World:
         iso_x = x - y
         iso_y = (x + y) / 2
         return iso_x, iso_y
+
+    def load_images(self):
+        block = pg.image.load("assets/graphics/block.png")
+        rock = pg.image.load("assets/graphics/rock.png")
+        tree = pg.image.load("assets/graphics/tree.png")
+
+        images = {
+            "block": block,
+            "rock": rock,
+            "tree": tree,
+        }
+
+        return images
