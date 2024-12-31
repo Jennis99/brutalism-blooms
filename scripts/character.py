@@ -1,5 +1,6 @@
 import pygame as pg
 from .settings import TILE_SIZE, CHARACTER_SPEED
+import math
 
 
 class Character:
@@ -74,14 +75,23 @@ class Character:
         if dx != 0 or dy != 0:
             self.is_moving = True
 
-            if dx > 0:
-                self.facing_direction = 'right'
-            elif dx < 0:
-                self.facing_direction = 'left'
-            elif dy < 0:
-                self.facing_direction = 'up'
-            elif dy > 0:
-                self.facing_direction = 'down'
+            # Normalize diagonal movement
+            if dx != 0 and dy != 0:
+                length = math.sqrt(dx * dx + dy * dy)
+                dx = dx / length
+                dy = dy / length
+
+            # Update facing direction
+            if abs(dx) > abs(dy):
+                if dx > 0:
+                    self.facing_direction = 'right'
+                else:
+                    self.facing_direction = 'left'
+            else:
+                if dy < 0:
+                    self.facing_direction = 'up'
+                else:
+                    self.facing_direction = 'down'
 
             self.grid_x += dx * speed
             self.grid_y += dy * speed
@@ -103,10 +113,15 @@ class Character:
             dx = -1
         if keys[pg.K_RIGHT]:
             dx = 1
+
+        # Left shift to sprint
+        current_speed = CHARACTER_SPEED * 1.5 if keys[pg.K_LSHIFT] else CHARACTER_SPEED
         if keys[pg.K_LSHIFT]:
+            current_speed = CHARACTER_SPEED * 1.5
             if self.is_moving:
                 self.animation_delay = 75
-            self.move(dx, dy, CHARACTER_SPEED * 1.5)
         else:
-            self.move(dx, dy, CHARACTER_SPEED)
             self.animation_delay = 100
+            current_speed = CHARACTER_SPEED
+
+        self.move(dx, dy, current_speed)
