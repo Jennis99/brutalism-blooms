@@ -39,7 +39,8 @@ class Game:
         self.character.handle_input(keys)
 
     def update(self):
-        pass
+        current_time = pg.time.get_ticks()
+        self.character.update_animation(current_time)
 
     def draw(self):
 
