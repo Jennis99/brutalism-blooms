@@ -3,6 +3,7 @@ import sys
 from .world import World
 from .settings import TILE_SIZE
 from .utils import draw_text
+from .character import Character
 
 
 class Game:
@@ -12,6 +13,7 @@ class Game:
         self.clock = clock
         self.width, self.height = self.screen.get_size()
 
+        self.character = Character(5, 5)
         self.world = World(10, 10, self.width, self.height)
 
     def run(self):
@@ -31,6 +33,10 @@ class Game:
                 if event.key == pg.K_ESCAPE:
                     pg.quit()
                     sys.exit()
+
+        # Handle character movement input
+        keys = pg.key.get_pressed()
+        self.character.handle_input(keys)
 
     def update(self):
         pass
@@ -57,6 +63,8 @@ class Game:
                 polygon = self.world.world[x][y]["iso_poly"]
                 polygon = [(x + self.width / 2, y + self.height / 4) for x, y in polygon]
                 pg.draw.polygon(self.screen, (255, 0, 0), polygon, 1)
+
+                self.character.draw(self.screen, self.width, self.height)
 
         # FPS Counter
         draw_text(self.screen, f"FPS: {round(self.clock.get_fps())}", 25, (255, 255, 255), (10, 10))
