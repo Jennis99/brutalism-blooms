@@ -2,6 +2,7 @@ import pygame as pg
 import sys
 from .world import World
 from .settings import TILE_SIZE
+from .utils import draw_text
 
 
 class Game:
@@ -35,7 +36,6 @@ class Game:
         pass
 
     def draw(self):
-        self.screen.fill("skyblue")
 
         # Rendering the surface of the world for whole screen starting at 0,0
         self.screen.blit(self.world.world_surface, (0, 0))
@@ -57,5 +57,8 @@ class Game:
                 polygon = self.world.world[x][y]["iso_poly"]
                 polygon = [(x + self.width / 2, y + self.height / 4) for x, y in polygon]
                 pg.draw.polygon(self.screen, (255, 0, 0), polygon, 1)
+
+        # FPS Counter
+        draw_text(self.screen, f"FPS: {round(self.clock.get_fps())}", 25, (255, 255, 255), (10, 10))
 
         pg.display.flip()
