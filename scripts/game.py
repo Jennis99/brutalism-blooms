@@ -61,8 +61,8 @@ class Game:
                 if tile != "":
                     self.screen.blit(
                         self.world.tiles[tile],
-                        (render_pos[0] + self.width / 2 + self.camera.scroll.x,
-                         render_pos[1] + self.height / 4 - (self.world.tiles[tile].get_height() - TILE_SIZE) + self.camera.scroll.y)
+                        (render_pos[0] + self.world.world_surface.get_width() / 2 + self.camera.scroll.x,
+                         render_pos[1] + (self.world.tiles[tile].get_height() - TILE_SIZE) + self.camera.scroll.y)
                     )
 
         self.character.draw(self.screen, self.width, self.height)
