@@ -16,18 +16,18 @@ class World:
         self.world = self.create_world()
 
     def create_world(self):
-
+        self.world_surface.fill((0, 0, 0, 0))  # Clear the surface with transparency (RGBA for alpha)
         world = []
-
         for grid_x in range(self.grid_length_x):
             world.append([])
             for grid_y in range(self.grid_length_y):
                 world_tile = self.grid_to_world(grid_x, grid_y)
                 world[grid_x].append(world_tile)
-
                 render_pos = world_tile["render_pos"]
-                self.world_surface.blit(self.tiles["block"], (render_pos[0] + self.width / 2, render_pos[1] + self.height / 4))
-
+                self.world_surface.blit(
+                    self.tiles["block"],
+                    (render_pos[0] + self.width / 2, render_pos[1] + self.height / 4)
+                )
         return world
 
     def grid_to_world(self, grid_x, grid_y):

@@ -14,9 +14,9 @@ class Game:
         self.clock = clock
         self.width, self.height = self.screen.get_size()
 
-        self.character = Character(5, 5)
         self.camera = Camera(self.width, self.height)
-        self.world = World(10, 10, self.width, self.height)
+        self.character = Character(5, 5)
+        self.world = World(50, 50, self.width, self.height)
 
     def run(self):
         self.playing = True
@@ -47,25 +47,25 @@ class Game:
         self.camera.update(self.character)
 
     def draw(self):
+        # Clear the screen
+        self.screen.fill((0, 0, 0))  # Black background
 
-        # Rendering the surface of the world for whole screen starting at 0,0
+        # Blit the world surface
         self.screen.blit(self.world.world_surface, (self.camera.scroll.x, self.camera.scroll.y))
 
         for x in range(self.world.grid_length_x):
             for y in range(self.world.grid_length_y):
-
                 render_pos = self.world.world[x][y]["render_pos"]
-                # self.screen.blit(self.world.tiles["block"], (render_pos[0] + self.width / 2, render_pos[1] + self.height / 4))
 
                 tile = self.world.world[x][y]["tile"]
                 if tile != "":
-                    # This line renders the trees/rocks but needs to move them up by height of tree or rock and the height of a normal tile
-                    self.screen.blit(self.world.tiles[tile],
-                                     (render_pos[0] + self.width / 2 + self.camera.scroll.x,
-                                      render_pos[1] + self.height / 4 - (self.world.tiles[tile].get_height() - TILE_SIZE) + self.camera.scroll.y)
-                                     )
+                    self.screen.blit(
+                        self.world.tiles[tile],
+                        (render_pos[0] + self.width / 2 + self.camera.scroll.x,
+                         render_pos[1] + self.height / 4 - (self.world.tiles[tile].get_height() - TILE_SIZE) + self.camera.scroll.y)
+                    )
 
-                self.character.draw(self.screen, self.width, self.height)
+        self.character.draw(self.screen, self.width, self.height)
 
         # FPS Counter
         draw_text(self.screen, f"FPS: {round(self.clock.get_fps())}", 25, (255, 255, 255), (10, 10))
