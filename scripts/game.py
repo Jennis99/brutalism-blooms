@@ -4,6 +4,7 @@ from .world import World
 from .settings import TILE_SIZE
 from .utils import draw_text
 from .character import Character
+from .camera import Camera
 
 
 class Game:
@@ -14,6 +15,7 @@ class Game:
         self.width, self.height = self.screen.get_size()
 
         self.character = Character(5, 5)
+        self.camera = Camera(self.width, self.height)
         self.world = World(10, 10, self.width, self.height)
 
     def run(self):
@@ -42,10 +44,12 @@ class Game:
         current_time = pg.time.get_ticks()
         self.character.update_animation(current_time)
 
+        self.camera.update(self.character)
+
     def draw(self):
 
         # Rendering the surface of the world for whole screen starting at 0,0
-        self.screen.blit(self.world.world_surface, (0, 0))
+        self.screen.blit(self.world.world_surface, (self.camera.scroll.x, self.camera.scroll.y))
 
         for x in range(self.world.grid_length_x):
             for y in range(self.world.grid_length_y):
@@ -57,13 +61,9 @@ class Game:
                 if tile != "":
                     # This line renders the trees/rocks but needs to move them up by height of tree or rock and the height of a normal tile
                     self.screen.blit(self.world.tiles[tile],
-                                     (render_pos[0] + self.width / 2, render_pos[1] + self.height / 4 - (self.world.tiles[tile].get_height() - TILE_SIZE))
+                                     (render_pos[0] + self.width / 2 + self.camera.scroll.x,
+                                      render_pos[1] + self.height / 4 - (self.world.tiles[tile].get_height() - TILE_SIZE) + self.camera.scroll.y)
                                      )
-
-                # Red grid for debugging
-                polygon = self.world.world[x][y]["iso_poly"]
-                polygon = [(x + self.width / 2, y + self.height / 4) for x, y in polygon]
-                pg.draw.polygon(self.screen, (255, 0, 0), polygon, 1)
 
                 self.character.draw(self.screen, self.width, self.height)
 

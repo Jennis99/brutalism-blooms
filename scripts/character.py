@@ -8,6 +8,9 @@ class Character:
         self.grid_x = x
         self.grid_y = y
 
+        self.render_x = 0
+        self.render_y = 0
+
         # Animation setup
         self.current_frame = 0
         self.animation_timer = 0
@@ -99,9 +102,9 @@ class Character:
             self.is_moving = False
 
     def draw(self, surface, screen_width, screen_height):
-        render_x = self.grid_x + screen_width / 2 - self.width / 2
-        render_y = self.grid_y + screen_height / 4 - (self.height - TILE_SIZE)
-        surface.blit(self.image, (render_x, render_y))
+        self.render_x = self.grid_x + screen_width / 2 - self.width / 2
+        self.render_y = self.grid_y + screen_height / 4 - (self.height - TILE_SIZE)
+        surface.blit(self.image, (self.render_x, self.render_y))
 
     def handle_input(self, keys):
         dx = dy = 0
